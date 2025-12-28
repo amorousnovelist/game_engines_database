@@ -1,0 +1,133 @@
+﻿#define _CRT_SECURE_NO_DEPRECATE
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "engines.h"
+#include "engines_tools.h"
+#include "engines_storage.h"
+#include "engines_search.h"
+#include "engines_sort.h"
+#define FIELD_SIZE 128
+
+int main()
+{
+	system("chcp 1251 > nul");
+
+	ENGINES* database = NULL;
+	unsigned records_count;
+	char choice;
+
+	printf("(d) Загрузка данных из файла\n\
+(v) Просмотр всех записей\n\
+(r) Поиск по заданному диапазону\n\
+(s) Сортировка данных\n\
+(a) Добавление новой записи\n\
+(t) Добавление новой записи с тестовыми данными\n\
+(w) Сохранение данных в файл\n\
+(q) Выход\n");
+	do {
+		printf("----------\nВыберите команду: ");
+		scanf(" %c", &choice);
+		getchar();
+
+		switch (choice)
+		{
+		case 'd':
+		case 'v':
+		case 'r':
+		case 's':
+		case 'a':
+		{
+			if (!(database))
+			{
+				printf("Внимание: База данных не была инициализирована!\nИнициализация базы данных...\n");
+				if (!(database = (ENGINES*)malloc(sizeof(ENGINES))))
+				{
+					printf("Ошибка инициализации: указатель на выделенную память не возвращен. Попробуйте ещё раз.\n");
+					break;
+				}
+				records_count = 1;
+			}
+			else
+			{
+				if (!(database = realloc(database, (++records_count) * sizeof(ENGINES))))
+				{
+					printf("Ошибка добавления записи: указатель на новую выделенную память не возвращен. Попробуйте ещё раз.\n");
+					break;
+				}
+			}
+			char name[FIELD_SIZE];
+			char tech_render[FIELD_SIZE];
+			unsigned polygons;
+			struct supported_platforms* supported_platforms = NULL;
+			char supported_platforms_lexemes[FIELD_SIZE];
+			char* supported_platforms_lexeme = NULL;
+			char physics_quality;
+			unsigned license_cost;
+			char community[FIELD_SIZE];
+			char doc[FIELD_SIZE];
+			float rating;
+
+			printf("Введите наименование игрового движка: ");
+			scanf(" %s", name);
+			printf("Введите наименование технологии рендеринга: ");
+			scanf(" %s", tech_render);
+			printf("Укажите количество полигонов: ");
+			scanf(" %d", &polygons);
+			printf("Введите наименования поддерживаемых платформ (через запятую с пробелом, запятая в конце не нужна): ");
+			fgets(supported_platforms_lexemes, sizeof(supported_platforms_lexemes), stdin);
+			supported_platforms_lexemes[strcspn(supported_platforms_lexemes, "\n")] = '\0';
+
+			if (supported_platforms_lexeme = strtok(supported_platforms_lexemes, ", "))
+			{
+				supported_platforms = (struct supported_platforms*)malloc(sizeof(struct supported_platforms));
+				supported_platforms->name = (char*)malloc(strlen(supported_platforms_lexeme) + 1);
+				strcpy(supported_platforms->name, supported_platforms_lexeme);
+				supported_platforms->next = NULL;
+			}
+
+			while (supported_platforms_lexeme = strtok('\0', ", "))
+			{
+				struct supported_platforms* new_supported_platform = NULL;
+				new_supported_platform = (struct supported_platforms*)malloc(sizeof(struct supported_platforms));
+				new_supported_platform->name = (char*)malloc(strlen(supported_platforms_lexeme) + 1);
+				strcpy(new_supported_platform->name, supported_platforms_lexeme);
+				new_supported_platform->next = supported_platforms;
+
+				supported_platforms = new_supported_platform;
+			}
+			/*while (supported_platforms)
+			{
+				printf("%s\n", supported_platforms->name);
+				supported_platforms = supported_platforms->next;
+			}*/
+			printf("Обозначте качество физики игрового движка символом из набора (A, B, C): ");
+			scanf(" %c", &physics_quality); //потенциальные проблемы с вводом
+			while (physics_quality != 'A' && physics_quality != 'B' && physics_quality != 'C')
+			{
+				printf("Ошибка записи поля: '%c' не является символом из предложенного набора.\nПопробуйте ещё раз: ", physics_quality);
+				scanf(" %c", &physics_quality);
+			}
+			printf("Укажите цену лицензии: ");
+			scanf(" %d", &license_cost);
+			printf("Введите ссылку на сообщество разработчиков движка: ");
+			scanf(" %s", community);
+			printf("Введите ссылку на документацию к движку: ");
+			scanf(" %s", doc);
+			printf("Укажите рейтинг игрового движка: ");
+			scanf(" %f", &rating);
+
+			//описать функцию для инициализации полей последнего элемента массива структур
+			break;
+		}
+		case 't':
+		case 'w':
+		case 'q':
+		{
+			puts("Завершение работы...");
+			break;
+		}
+		default: printf("Символ '%c' не является командой ввода. Повторите ввод ещё раз.\n", choice); break;
+		}
+	} while (choice != 'q');
+}
