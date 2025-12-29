@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "engines.h"
 #include "engines_tools.h"
 #include "engines_storage.h"
 #include "engines_search.h"
@@ -27,13 +26,52 @@ int main()
 (q) Выход\n");
 	do {
 		printf("----------\nВыберите команду: ");
-		scanf(" %c", &choice);
-		getchar();
+		scanf(" %c", &choice); //getchar();
 
 		switch (choice)
 		{
 		case 'd':
+		{
+			char dataname[FIELD_SIZE];
+
+			if (database)
+			{
+				char confirm;
+				printf("Ошибка чтения файла: база данных уже инициализирована.\nЧтение данных из файла удалит текущие несохраненные записи. \
+Убедитесь, что вы сохранили текущие записи и вернитесь к чтению файла.\nВы хотите прочитать новую базу данных?\n\
+(y|n): ");
+				scanf(" %c", &confirm);
+
+				if (confirm != 'y')
+				{
+					printf("Операция чтения файла отменена пользователем.\n");
+					break;
+				}
+
+				//free_database(database, records_count); - написать функцию освобождения памяти
+				database = NULL;
+				records_count = 0;
+			}
+			printf("Введите имя файла: ");
+			scanf(" %s", dataname);
+			if (!(database = read_data(dataname, &records_count)))
+			{
+				printf("Ошибка чтения файла: \"%s\" не существует в данном каталоге.\nПроверьте ввод и попробуйте ещё раз.\n", dataname);
+				break;
+			}
+			break;
+		}
 		case 'v':
+		{
+			if (!(database))
+			{
+				printf("Ошибка просмотра записей: база данных не инициализирована.\nИнициализируйте базу данных и попробуйте ещё раз.\n");
+				break;
+			}
+
+			print_record(database, records_count);
+			break;
+		}
 		case 'r':
 		case 's':
 		case 'a':
@@ -73,7 +111,7 @@ int main()
 			printf("Введите наименование технологии рендеринга: ");
 			scanf(" %s", tech_render);
 			printf("Укажите количество полигонов: ");
-			scanf(" %d", &polygons);
+			scanf(" %d", &polygons); getchar();
 			printf("Введите наименования поддерживаемых платформ (через запятую с пробелом, запятая в конце не нужна): ");
 			fgets(supported_platforms_lexemes, sizeof(supported_platforms_lexemes), stdin);
 			supported_platforms_lexemes[strcspn(supported_platforms_lexemes, "\n")] = '\0';
@@ -96,11 +134,6 @@ int main()
 
 				supported_platforms = new_supported_platform;
 			}
-			/*while (supported_platforms)
-			{
-				printf("%s\n", supported_platforms->name);
-				supported_platforms = supported_platforms->next;
-			}*/
 			printf("Обозначте качество физики игрового движка символом из набора (A, B, C): ");
 			scanf(" %c", &physics_quality); //потенциальные проблемы с вводом
 			while (physics_quality != 'A' && physics_quality != 'B' && physics_quality != 'C')
@@ -117,11 +150,87 @@ int main()
 			printf("Укажите рейтинг игрового движка: ");
 			scanf(" %f", &rating);
 
-			//описать функцию для инициализации полей последнего элемента массива структур
+			if (init_record(database, records_count, name, tech_render, polygons, supported_platforms, physics_quality, license_cost, community, doc, rating))
+			{
+				printf("Ошибка инициализации полей последнего элемента массива структур: невозможно выделить память.\nПопробуйте ещё раз.\n");
+				break;
+			}
 			break;
 		}
 		case 't':
+		{
+			if (!(database))
+			{
+				printf("Внимание: База данных не была инициализирована!\nИнициализация базы данных...\n");
+				if (!(database = (ENGINES*)malloc(sizeof(ENGINES))))
+				{
+					printf("Ошибка инициализации: указатель на выделенную память не возвращен. Попробуйте ещё раз.\n");
+					break;
+				}
+				records_count = 1;
+			}
+			else
+			{
+				if (!(database = realloc(database, (++records_count) * sizeof(ENGINES))))
+				{
+					printf("Ошибка добавления записи: указатель на новую выделенную память не возвращен. Попробуйте ещё раз.\n");
+					break;
+				}
+			}
+			char name[FIELD_SIZE] = "имя";
+			char tech_render[FIELD_SIZE] = "рендер";
+			unsigned polygons = 1;
+			struct supported_platforms* supported_platforms = NULL;
+			char supported_platforms_lexemes[FIELD_SIZE] = "первая, вторая, третья, четвертая, пятая, шестая";
+			char* supported_platforms_lexeme = NULL;
+			char physics_quality = 'A';
+			unsigned license_cost = 777;
+			char community[FIELD_SIZE] = "https://комьюнити.ком";
+			char doc[FIELD_SIZE] = "ftp://документация.пдф";
+			float rating = 7.324f;
+
+			supported_platforms_lexemes[strcspn(supported_platforms_lexemes, "\n")] = '\0';
+
+			if (supported_platforms_lexeme = strtok(supported_platforms_lexemes, ", "))
+			{
+				supported_platforms = (struct supported_platforms*)malloc(sizeof(struct supported_platforms));
+				supported_platforms->name = (char*)malloc(strlen(supported_platforms_lexeme) + 1);
+				strcpy(supported_platforms->name, supported_platforms_lexeme);
+				supported_platforms->next = NULL;
+			}
+
+			while (supported_platforms_lexeme = strtok('\0', ", "))
+			{
+				struct supported_platforms* new_supported_platform = NULL;
+				new_supported_platform = (struct supported_platforms*)malloc(sizeof(struct supported_platforms));
+				new_supported_platform->name = (char*)malloc(strlen(supported_platforms_lexeme) + 1);
+				strcpy(new_supported_platform->name, supported_platforms_lexeme);
+				new_supported_platform->next = supported_platforms;
+
+				supported_platforms = new_supported_platform;
+			}
+
+			if (init_record(database, records_count, name, tech_render, polygons, supported_platforms, physics_quality, license_cost, community, doc, rating))
+			{
+				printf("Ошибка инициализации полей последнего элемента массива структур: невозможно выделить память.\nПопробуйте ещё раз.\n");
+				break;
+			}
+			break;
+		}
 		case 'w':
+		{
+			if (!(database))
+			{
+				printf("Ошибка записи в файл: база данных не инициализирована.\nИнициализируйте базу данных и попробуйте ещё раз.\n");
+				break;
+			}
+			char dataname[FIELD_SIZE];
+
+			printf("Введите название файла: ");
+			scanf(" %s", dataname);
+			store_data(dataname, database, records_count);
+			break;
+		}
 		case 'q':
 		{
 			puts("Завершение работы...");
