@@ -1,5 +1,6 @@
 ﻿#include "engines.h"
 
+void gnome_sort(ENGINES* database, const unsigned count);
 int print_record(ENGINES* database, const unsigned count);
 int init_record(ENGINES* database, const unsigned count, \
 	const char* name, \

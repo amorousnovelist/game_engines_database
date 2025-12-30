@@ -121,6 +121,16 @@ int main()
 			break;
 		}
 		case 's':
+		{
+			if (!(database))
+			{
+				printf("Ошибка сортировки записей: база данных не инициализирована.\nИнициализируйте базу данных и попробуйте ещё раз.\n");
+				break;
+			}
+			gnome_sort(database, records_count);
+			printf("Сортировка завершена успешно.\n");
+			break;
+		}
 		case 'a':
 		{
 			if (!(database))

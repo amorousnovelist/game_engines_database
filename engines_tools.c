@@ -1,8 +1,26 @@
 ﻿#define _CRT_SECURE_NO_DEPRECATE
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <math.h>
 #include "engines_tools.h"
 
+void gnome_sort(ENGINES* database, const unsigned count)
+{
+	int index = 1;
+	while (index < count)
+	{
+		if (sqrt(database[index].polygons) >= sqrt(database[index - 1].polygons))
+			index++;
+		else
+		{
+			ENGINES temp = database[index];
+			database[index] = database[index - 1];
+			database[index - 1] = temp;
+			index--;
+		}
+	}
+}
 int print_record(ENGINES* database, const unsigned count)
 {
 	for (int i = 0; i < count; ++i)
