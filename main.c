@@ -73,6 +73,53 @@ int main()
 			break;
 		}
 		case 'r':
+		{
+			if (!(database))
+			{
+				printf("Ошибка поиска записей: база данных не инициализирована.\nИнициализируйте базу данных и попробуйте ещё раз.\n");
+				break;
+			}
+			unsigned success = 0;
+			unsigned begin;
+			unsigned end;
+			char user_tech_render[FIELD_SIZE];
+			char user_supported_platforms_lexemes[FIELD_SIZE];
+			printf("Введите начальное значение интервала поиска (целое неотрицательное значение): ");
+			scanf(" %d", &begin);
+			printf("Введите конечное значение интервала поиска (целое неотрицательное значение, большее %d): ", begin + 1);
+			scanf(" %d", &end);
+			/*while (end < begin + 1)
+			{
+				printf("Ошибка инициализации конечного значения интервала поиска: %d меньше %d.\nПопробуйте задать значение ещё раз.\n", end, begin + 1);
+				scanf(" %s", &end);
+			}*/
+			printf("Введите требуемое название технологии рендеринга: ");
+			scanf(" %s", user_tech_render);
+			printf("Введите требуемые(-ое) названия(-ие) поддерживаемых(-ой) платформ(-ы) (через запятую с пробелами, в конце ввода запята не нужна): ");
+			scanf(" %s", user_supported_platforms_lexemes);
+			for (int i = begin + 1; i < end; i++)
+			{
+				if (!(strcmp(database[i].tech_render, user_tech_render)))
+					{
+						struct supported_platforms* reader_database = database[i].supported_platforms;
+						while (reader_database)
+						{
+							if (strstr(user_supported_platforms_lexemes, reader_database->name))
+							{
+								printf("Совпадение найдено в записи %d.\n", i + 1);
+								success = 1;
+								break;
+							}
+							reader_database = reader_database->next;
+						}
+						if (!(success))
+						{
+							printf("Совпадение не найдено.\n");
+						}
+					}
+			}
+			break;
+		}
 		case 's':
 		case 'a':
 		{
