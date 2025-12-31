@@ -8,11 +8,13 @@ typedef struct engines
 {
 	char* name;
 	char* tech_render;
-	unsigned polygons;
-	struct supported_platforms* supported_platforms;
-	char physics_quality;
-	unsigned license_cost;
 	char* community;
 	char* doc;
+	struct supported_platforms* supported_platforms;
+	
+	unsigned polygons;
+	unsigned license_cost;
 	float rating;
+
+	char physics_quality;
 } ENGINES;
