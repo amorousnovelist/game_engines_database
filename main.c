@@ -234,7 +234,90 @@ int main()
 					break;
 				}
 			}
-			char name[FIELD_SIZE] = "имя";
+			//init_random_engine(&database[records_count - 1]);
+			const char* names[] = {
+		"Unreal Engine", "Unity", "Godot", "CryEngine",
+		"Frostbite", "Source", "id Tech", "GameMaker"
+			};
+			const char* techs[] = {
+				"Deferred Shading", "Forward+", "Ray Tracing",
+				"Voxel Cone Tracing", "Tiled Deferred"
+			};
+			const char* platforms[] = {
+				"PC", "PlayStation", "Xbox", "Nintendo Switch",
+				"Android", "iOS", "Linux", "MacOS"
+			};
+			const char* communities[] = {
+				"https://unrealengine.com/community",
+				"https://unity.com/community",
+				"https://godotengine.org/community",
+				"https://answers.unrealengine.com"
+			};
+			const char* docs[] = {
+				"https://docs.unrealengine.com",
+				"https://docs.unity3d.com",
+				"https://docs.godotengine.org",
+				"https://docs.cryengine.com"
+			};
+			char name[FIELD_SIZE];
+			char tech_render[FIELD_SIZE];
+			unsigned polygons;
+			struct supported_platforms* supported_platforms = NULL;
+			char supported_platforms_lexemes[FIELD_SIZE];
+			char* supported_platforms_lexeme = NULL;
+			char physics_quality;
+			unsigned license_cost;
+			char community[FIELD_SIZE];
+			char doc[FIELD_SIZE];
+			float rating;
+			// Имя
+			strcpy(name, names[rand() % (sizeof(names) / sizeof(names[0]))]);
+
+			// Технология рендеринга
+			strcpy(tech_render, techs[rand() % (sizeof(techs) / sizeof(techs[0]))]);
+
+			// Полигоны (от 1M до 100M)
+			polygons = 1000000 + (rand() % 99000000);
+
+			// Список платформ (1-4 случайные платформы)
+			unsigned platforms_count = 1 + (rand() % 4);
+			supported_platforms = NULL;
+
+			for (unsigned i = 0; i < platforms_count; i++) {
+				struct supported_platforms* new_platform = malloc(sizeof(struct supported_platforms));
+				char* platform_name = platforms[rand() % (sizeof(platforms) / sizeof(platforms[0]))];
+				new_platform->name = (char*)malloc(strlen(platform_name) + 1);
+				strcpy(new_platform->name, platform_name);
+				new_platform->next = supported_platforms;
+				supported_platforms = new_platform;
+			}
+
+			// Качество физики (A, B, C)
+			const char qualities[] = { 'A', 'B', 'C' };
+			physics_quality = qualities[rand() % 3];
+
+			// Цена лицензии ($0 - $100000)
+			license_cost = rand() % 100001;
+
+			// Сообщество
+			//community_rand = communities[rand() % (sizeof(communities) / sizeof(communities[0]))];
+			//community = (char*)malloc(strlen(community_rand) + 1);
+			strcpy(community, communities[rand() % (sizeof(communities) / sizeof(communities[0]))]);
+
+			// Документация
+			//doc = strdup(docs[rand() % (sizeof(docs) / sizeof(docs[0]))]);
+			strcpy(doc, docs[rand() % (sizeof(docs) / sizeof(docs[0]))]);
+
+			// Рейтинг (0.0 - 5.0 с одной цифрой после запятой)
+			rating = (rand() % 51) / 10.0f;  // 0.0 - 5.0
+
+			if (init_record(database, records_count, name, tech_render, polygons, supported_platforms, physics_quality, license_cost, community, doc, rating))
+			{
+				printf("Ошибка инициализации полей последнего элемента массива структур: невозможно выделить память.\nПопробуйте ещё раз.\n");
+				break;
+			}
+			break;
+			/*char name[FIELD_SIZE] = "имя";
 			char tech_render[FIELD_SIZE] = "рендер";
 			unsigned polygons = 1;
 			struct supported_platforms* supported_platforms = NULL;
@@ -272,7 +355,7 @@ int main()
 				printf("Ошибка инициализации полей последнего элемента массива структур: невозможно выделить память.\nПопробуйте ещё раз.\n");
 				break;
 			}
-			break;
+			break;*/
 		}
 		case 'w':
 		{

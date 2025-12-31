@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <time.h>
 #include "engines_tools.h"
 
 void gnome_sort(ENGINES* database, const unsigned count)
