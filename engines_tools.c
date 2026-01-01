@@ -2,26 +2,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <math.h>
-#include <time.h>
 #include "engines_tools.h"
 
-void gnome_sort(ENGINES* database, const unsigned count)
-{
-	int index = 1;
-	while (index < count)
-	{
-		if (sqrt(database[index].polygons) >= sqrt(database[index - 1].polygons))
-			index++;
-		else
-		{
-			ENGINES temp = database[index];
-			database[index] = database[index - 1];
-			database[index - 1] = temp;
-			index--;
-		}
-	}
-}
+/*
+* Печать всех записей базы данных
+* @param database - указатель на массив структур ENGINES
+* @param count - количество записей в базе данных
+* @return 0 в случае успешного завершения
+*/
 int print_record(ENGINES* database, const unsigned count)
 {
 	for (int i = 0; i < count; ++i)
@@ -52,6 +40,21 @@ int print_record(ENGINES* database, const unsigned count)
 
 	return 0;
 }
+/*
+* Инициализация полей последней записи базы данных
+* @param database - указатель на массив структур ENGINES
+* @param count - количество записей в базе данных
+* @param name - наименование игрового движка
+* @param tech_render - технология рендеринга
+* @param polygons - максимальное количество полигонов
+* @param supported_platforms - указатель на связный список поддерживаемых платформ
+* @param physics_quality - качество физики
+* @param license_cost - цена лицензии
+* @param community - ссылка на сообщество разработчиков
+* @param doc - ссылка на документацию
+* @param rating - рейтинг игрового движка
+* @return 0 в случае успешного завершения; 1 в случае ошибки выделения памяти
+*/
 int init_record(ENGINES* database, const unsigned count, \
 	const char* name, \
 	const char* tech_render, \

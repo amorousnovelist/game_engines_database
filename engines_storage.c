@@ -3,6 +3,12 @@
 #include <stdlib.h>
 #include "engines_storage.h"
 
+/*
+* Чтение базы данных из бинарного файла
+* @param dataname - имя файла
+* @param records_count - указатель на переменную, в которую будет записано количество записей
+* @return указатель на массив структур ENGINES, содержащий записи из файла; NULL в случае ошибки открытия файла
+ */
 ENGINES* read_data(const char* dataname, unsigned* records_count)
 {
 	FILE* input_file;
@@ -69,6 +75,13 @@ ENGINES* read_data(const char* dataname, unsigned* records_count)
 	}
 	return database;
 }
+/*
+* Сохранение базы данных в бинарный файл
+* @param dataname - имя файла
+* @param database - указатель на массив структур ENGINES, содержащий записи для сохранения
+* @param records_count - количество записей в базе данных
+* @return 0 в случае успешного завершения; 1 в случае ошибки открытия файла
+*/
 int store_data(const char* dataname, ENGINES* database, const unsigned records_count)
 {
 	FILE* output_file;

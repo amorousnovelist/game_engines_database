@@ -317,45 +317,6 @@ int main()
 				break;
 			}
 			break;
-			/*char name[FIELD_SIZE] = "имя";
-			char tech_render[FIELD_SIZE] = "рендер";
-			unsigned polygons = 1;
-			struct supported_platforms* supported_platforms = NULL;
-			char supported_platforms_lexemes[FIELD_SIZE] = "первая, вторая, третья, четвертая, пятая, шестая";
-			char* supported_platforms_lexeme = NULL;
-			char physics_quality = 'A';
-			unsigned license_cost = 777;
-			char community[FIELD_SIZE] = "https://комьюнити.ком";
-			char doc[FIELD_SIZE] = "ftp://документация.пдф";
-			float rating = 7.324f;
-
-			supported_platforms_lexemes[strcspn(supported_platforms_lexemes, "\n")] = '\0';
-
-			if (supported_platforms_lexeme = strtok(supported_platforms_lexemes, ", "))
-			{
-				supported_platforms = (struct supported_platforms*)malloc(sizeof(struct supported_platforms));
-				supported_platforms->name = (char*)malloc(strlen(supported_platforms_lexeme) + 1);
-				strcpy(supported_platforms->name, supported_platforms_lexeme);
-				supported_platforms->next = NULL;
-			}
-
-			while (supported_platforms_lexeme = strtok('\0', ", "))
-			{
-				struct supported_platforms* new_supported_platform = NULL;
-				new_supported_platform = (struct supported_platforms*)malloc(sizeof(struct supported_platforms));
-				new_supported_platform->name = (char*)malloc(strlen(supported_platforms_lexeme) + 1);
-				strcpy(new_supported_platform->name, supported_platforms_lexeme);
-				new_supported_platform->next = supported_platforms;
-
-				supported_platforms = new_supported_platform;
-			}
-
-			if (init_record(database, records_count, name, tech_render, polygons, supported_platforms, physics_quality, license_cost, community, doc, rating))
-			{
-				printf("Ошибка инициализации полей последнего элемента массива структур: невозможно выделить память.\nПопробуйте ещё раз.\n");
-				break;
-			}
-			break;*/
 		}
 		case 'w':
 		{
@@ -379,4 +340,5 @@ int main()
 		default: printf("Символ '%c' не является командой ввода. Повторите ввод ещё раз.\n", choice); break;
 		}
 	} while (choice != 'q');
+	return 0;
 }

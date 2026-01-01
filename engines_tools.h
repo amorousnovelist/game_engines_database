@@ -1,7 +1,5 @@
 ﻿#include "engines.h"
 
-void init_random_engine(ENGINES* engine);
-void gnome_sort(ENGINES* database, const unsigned count);
 int print_record(ENGINES* database, const unsigned count);
 int init_record(ENGINES* database, const unsigned count, \
 	const char* name, \
