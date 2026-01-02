@@ -113,7 +113,9 @@ int main()
 				break;
 			}
 			printf("Введите требуемое название технологии рендеринга: ");
-			scanf(" %s", user_tech_render);
+			getchar();
+			fgets(user_tech_render, sizeof(user_tech_render), stdin);
+			user_tech_render[strcspn(user_tech_render, "\n")] = '\0';
 			printf("Введите требуемые(-ое) названия(-ие) поддерживаемых(-ой) платформ(-ы) (через запятую с пробелами, в конце ввода запята не нужна): ");
 			scanf(" %s", user_supported_platforms_lexemes);
 			for (int i = begin + 1; i < end; i++)
@@ -183,12 +185,19 @@ int main()
 			float rating;
 
 			printf("Введите наименование игрового движка: ");
-			scanf(" %s", name);
+			//scanf(" %s", name);
+			getchar();
+			fgets(name, sizeof(name), stdin);
+			name[strcspn(name, "\n")] = '\0';
 			printf("Введите наименование технологии рендеринга: ");
-			scanf(" %s", tech_render);
+			//scanf(" %s", tech_render);
+			getchar();
+			fgets(tech_render, sizeof(tech_render), stdin);
+			tech_render[strcspn(tech_render, "\n")] = '\0';
 			printf("Укажите количество полигонов: ");
-			scanf(" %d", &polygons); getchar();
+			scanf(" %d", &polygons);
 			printf("Введите наименования поддерживаемых платформ (через запятую с пробелом, запятая в конце не нужна): ");
+			getchar();
 			fgets(supported_platforms_lexemes, sizeof(supported_platforms_lexemes), stdin);
 			supported_platforms_lexemes[strcspn(supported_platforms_lexemes, "\n")] = '\0';
 
@@ -220,9 +229,12 @@ int main()
 			printf("Укажите цену лицензии: ");
 			scanf(" %d", &license_cost);
 			printf("Введите ссылку на сообщество разработчиков движка: ");
-			scanf(" %s", community);
+			getchar();
+			fgets(community, sizeof(community), stdin);
+			community[strcspn(community, "\n")] = '\0';
 			printf("Введите ссылку на документацию к движку: ");
-			scanf(" %s", doc);
+			fgets(doc, sizeof(doc), stdin);
+			doc[strcspn(doc, "\n")] = '\0';
 			printf("Укажите рейтинг игрового движка: ");
 			scanf(" %f", &rating);
 
