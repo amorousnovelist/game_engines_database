@@ -73,7 +73,7 @@ int init_record(ENGINES* database, const unsigned count, \
 
 	if (!database[count - 1].name || !database[count - 1].tech_render ||
 		!database[count - 1].community || !database[count - 1].doc) {
-		return 1;  // Ошибка выделения памяти
+		return 1;
 	}
 
 	strcpy(database[count - 1].name, name);
