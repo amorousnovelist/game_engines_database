@@ -130,13 +130,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="engines.h" />
-    <ClInclude Include="engines_search.h" />
     <ClInclude Include="engines_sort.h" />
     <ClInclude Include="engines_storage.h" />
     <ClInclude Include="engines_tools.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="engines_search.c" />
     <ClCompile Include="engines_sort.c" />
     <ClCompile Include="engines_storage.c" />
     <ClCompile Include="engines_tools.c" />

@@ -24,17 +24,11 @@
     <ClInclude Include="engines_sort.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="engines_search.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
     <ClInclude Include="engines.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="engines_search.c">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
     <ClCompile Include="engines_sort.c">
       <Filter>Исходные файлы</Filter>
     </ClCompile>

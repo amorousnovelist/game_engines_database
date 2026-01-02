@@ -4,7 +4,6 @@
 #include <string.h>
 #include "engines_tools.h"
 #include "engines_storage.h"
-#include "engines_search.h"
 #include "engines_sort.h"
 #define FIELD_SIZE 128
 
@@ -16,6 +15,8 @@ int main()
 	unsigned records_count;
 	char choice;
 
+	printf("Файловый менеджер базы данных игровых движков\nРазработал: Зеленев Илья бТИИ-251\n");
+
 	printf("(d) Загрузка данных из файла\n\
 (v) Просмотр всех записей\n\
 (r) Поиск по заданному диапазону\n\
@@ -26,7 +27,7 @@ int main()
 (q) Выход\n");
 	do {
 		printf("----------\nВыберите команду: ");
-		scanf(" %c", &choice); //getchar();
+		scanf(" %c", &choice);
 
 		switch (choice)
 		{
@@ -39,7 +40,7 @@ int main()
 				char confirm;
 				printf("Ошибка чтения файла: база данных уже инициализирована.\nЧтение данных из файла удалит текущие несохраненные записи. \
 Убедитесь, что вы сохранили текущие записи и вернитесь к чтению файла.\nВы хотите прочитать новую базу данных?\n\
-(y|n): ");
+Введите 'y', если вы хотите, введите 'n' в ином случае: ");
 				scanf(" %c", &confirm);
 
 				if (confirm != 'y')
@@ -47,10 +48,7 @@ int main()
 					printf("Операция чтения файла отменена пользователем.\n");
 					break;
 				}
-
-				//free_database(database, records_count); - написать функцию освобождения памяти
-				database = NULL;
-				records_count = 0;
+				free_database(database, records_count);
 			}
 			printf("Введите имя файла: ");
 			scanf(" %s", dataname);
@@ -59,6 +57,7 @@ int main()
 				printf("Ошибка чтения файла: \"%s\" не существует в данном каталоге.\nПроверьте ввод и попробуйте ещё раз.\n", dataname);
 				break;
 			}
+			printf("Файл \"%s\" успешно прочитан. Количество записей: %d.\n", dataname, records_count);
 			break;
 		}
 		case 'v':
@@ -86,13 +85,33 @@ int main()
 			char user_supported_platforms_lexemes[FIELD_SIZE];
 			printf("Введите начальное значение интервала поиска (целое неотрицательное значение): ");
 			scanf(" %d", &begin);
-			printf("Введите конечное значение интервала поиска (целое неотрицательное значение, большее %d): ", begin + 1);
-			scanf(" %d", &end);
-			/*while (end < begin + 1)
+			if (begin >= records_count - 1)
 			{
-				printf("Ошибка инициализации конечного значения интервала поиска: %d меньше %d.\nПопробуйте задать значение ещё раз.\n", end, begin + 1);
-				scanf(" %s", &end);
-			}*/
+				printf("Ошибка инициализации начального значения интервала поиска: %d больше или равно %d.\nПопробуйте задать значение ещё раз.\n", begin, records_count - 1);
+				break;
+			}
+			else if (begin == records_count - 2)
+			{
+				printf("Ошибка инициализации начального значения интервала поиска: %d равно индексу предпоследнего элемента базы %d.\nПопробуйте задать значение ещё раз.\n", begin, records_count - 2);
+				break;
+			}
+			else if (begin < 0)
+			{
+				printf("Ошибка инициализации начального значения интервала поиска: %d меньше 0.\nПопробуйте задать значение ещё раз.\n", begin);
+				break;
+			}
+			printf("Введите конечное значение интервала поиска (целое неотрицательное значение): ");
+			scanf(" %d", &end);
+			if (end > records_count)
+			{
+				printf("Ошибка инициализации конечного значения интервала поиска: %d больше %d.\nПопробуйте задать значение ещё раз.\n", end, records_count);
+				break;
+			}
+			else if (end <= begin + 1)
+			{
+				printf("Ошибка инициализации конечного значения интервала поиска: %d меньше или равно %d.\nПопробуйте задать значение ещё раз.\n", end, begin + 1);
+				break;
+			}
 			printf("Введите требуемое название технологии рендеринга: ");
 			scanf(" %s", user_tech_render);
 			printf("Введите требуемые(-ое) названия(-ие) поддерживаемых(-ой) платформ(-ы) (через запятую с пробелами, в конце ввода запята не нужна): ");
@@ -107,16 +126,16 @@ int main()
 							if (strstr(user_supported_platforms_lexemes, reader_database->name))
 							{
 								printf("Совпадение найдено в записи %d.\n", i + 1);
-								success = 1;
+								++success;
 								break;
 							}
 							reader_database = reader_database->next;
 						}
-						if (!(success))
-						{
-							printf("Совпадение не найдено.\n");
-						}
 					}
+			}
+			if (!(success))
+			{
+				printf("Совпадение не найдено.\n");
 			}
 			break;
 		}
@@ -192,7 +211,7 @@ int main()
 				supported_platforms = new_supported_platform;
 			}
 			printf("Обозначте качество физики игрового движка символом из набора (A, B, C): ");
-			scanf(" %c", &physics_quality); //потенциальные проблемы с вводом
+			scanf(" %c", &physics_quality);
 			while (physics_quality != 'A' && physics_quality != 'B' && physics_quality != 'C')
 			{
 				printf("Ошибка записи поля: '%c' не является символом из предложенного набора.\nПопробуйте ещё раз: ", physics_quality);
@@ -234,7 +253,6 @@ int main()
 					break;
 				}
 			}
-			//init_random_engine(&database[records_count - 1]);
 			const char* names[] = {
 		"Unreal Engine", "Unity", "Godot", "CryEngine",
 		"Frostbite", "Source", "id Tech", "GameMaker"
@@ -270,16 +288,12 @@ int main()
 			char community[FIELD_SIZE];
 			char doc[FIELD_SIZE];
 			float rating;
-			// Имя
 			strcpy(name, names[rand() % (sizeof(names) / sizeof(names[0]))]);
 
-			// Технология рендеринга
 			strcpy(tech_render, techs[rand() % (sizeof(techs) / sizeof(techs[0]))]);
 
-			// Полигоны (от 1M до 100M)
 			polygons = 1000000 + (rand() % 99000000);
 
-			// Список платформ (1-4 случайные платформы)
 			unsigned platforms_count = 1 + (rand() % 4);
 			supported_platforms = NULL;
 
@@ -292,24 +306,16 @@ int main()
 				supported_platforms = new_platform;
 			}
 
-			// Качество физики (A, B, C)
 			const char qualities[] = { 'A', 'B', 'C' };
 			physics_quality = qualities[rand() % 3];
 
-			// Цена лицензии ($0 - $100000)
 			license_cost = rand() % 100001;
 
-			// Сообщество
-			//community_rand = communities[rand() % (sizeof(communities) / sizeof(communities[0]))];
-			//community = (char*)malloc(strlen(community_rand) + 1);
 			strcpy(community, communities[rand() % (sizeof(communities) / sizeof(communities[0]))]);
 
-			// Документация
-			//doc = strdup(docs[rand() % (sizeof(docs) / sizeof(docs[0]))]);
 			strcpy(doc, docs[rand() % (sizeof(docs) / sizeof(docs[0]))]);
 
-			// Рейтинг (0.0 - 5.0 с одной цифрой после запятой)
-			rating = (rand() % 51) / 10.0f;  // 0.0 - 5.0
+			rating = (rand() % 51) / 10.0f;
 
 			if (init_record(database, records_count, name, tech_render, polygons, supported_platforms, physics_quality, license_cost, community, doc, rating))
 			{
@@ -329,7 +335,12 @@ int main()
 
 			printf("Введите название файла: ");
 			scanf(" %s", dataname);
-			store_data(dataname, database, records_count);
+			if (store_data(dataname, database, records_count))
+			{
+				printf("Ошибка записи файла: невозможно открыть файл \"%s\" для записи.\nПроверьте ввод и попробуйте ещё раз.\n", dataname);
+				break;
+			}
+			printf("Файл \"%s\" успешно записан. Количество записей: %d.\n", dataname, records_count);
 			break;
 		}
 		case 'q':
