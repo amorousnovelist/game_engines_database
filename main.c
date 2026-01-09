@@ -19,6 +19,7 @@ int main()
 
 	printf("(d) Загрузка данных из файла\n\
 (v) Просмотр всех записей\n\
+(o) Отображение веса базы данных в ОЗУ\n\
 (r) Поиск по заданному диапазону\n\
 (s) Сортировка данных\n\
 (a) Добавление новой записи\n\
@@ -27,7 +28,7 @@ int main()
 (q) Выход\n");
 	do {
 		printf("----------\nВыберите команду: ");
-		scanf(" %c", &choice);
+		scanf(" %c", &choice); getchar();
 
 		switch (choice)
 		{
@@ -41,7 +42,7 @@ int main()
 				printf("Ошибка чтения файла: база данных уже инициализирована.\nЧтение данных из файла удалит текущие несохраненные записи. \
 Убедитесь, что вы сохранили текущие записи и вернитесь к чтению файла.\nВы хотите прочитать новую базу данных?\n\
 Введите 'y', если вы хотите, введите 'n' в ином случае: ");
-				scanf(" %c", &confirm);
+				scanf(" %c", &confirm); getchar();
 
 				if (confirm != 'y')
 				{
@@ -51,7 +52,8 @@ int main()
 				free_database(database, records_count);
 			}
 			printf("Введите имя файла: ");
-			scanf(" %s", dataname);
+			fgets(dataname, sizeof(dataname), stdin);
+			dataname[strcspn(dataname, "\n")] = '\0';
 			if (!(database = read_data(dataname, &records_count)))
 			{
 				printf("Ошибка чтения файла: \"%s\" не существует в данном каталоге.\nПроверьте ввод и попробуйте ещё раз.\n", dataname);
@@ -67,8 +69,8 @@ int main()
 				printf("Ошибка просмотра записей: база данных не инициализирована.\nИнициализируйте базу данных и попробуйте ещё раз.\n");
 				break;
 			}
-
-			print_record(database, records_count);
+			for (int i = 0; i < records_count; i++)
+				print_record(database, i);
 			break;
 		}
 		case 'r':
@@ -83,41 +85,41 @@ int main()
 			unsigned end;
 			char user_tech_render[FIELD_SIZE];
 			char user_supported_platforms_lexemes[FIELD_SIZE];
-			printf("Введите начальное значение интервала поиска (целое неотрицательное значение): ");
-			scanf(" %d", &begin);
+			printf("Введите начальное значение интервала поиска (от %d до %d включительно): ", 1, records_count - 3);
+			scanf(" %d", &begin); --begin;
 			if (begin >= records_count - 1)
 			{
-				printf("Ошибка инициализации начального значения интервала поиска: %d больше или равно %d.\nПопробуйте задать значение ещё раз.\n", begin, records_count - 1);
+				printf("Ошибка инициализации начального значения интервала поиска: %d больше или равно %d.\nПопробуйте задать значение ещё раз.\n", begin + 1, records_count);
 				break;
 			}
 			else if (begin == records_count - 2)
 			{
-				printf("Ошибка инициализации начального значения интервала поиска: %d равно индексу предпоследнего элемента базы %d.\nПопробуйте задать значение ещё раз.\n", begin, records_count - 2);
+				printf("Ошибка инициализации начального значения интервала поиска: %d равно индексу предпоследнего элемента базы %d.\nПопробуйте задать значение ещё раз.\n", begin + 1, records_count - 1);
 				break;
 			}
 			else if (begin < 0)
 			{
-				printf("Ошибка инициализации начального значения интервала поиска: %d меньше 0.\nПопробуйте задать значение ещё раз.\n", begin);
+				printf("Ошибка инициализации начального значения интервала поиска: %d меньше 1.\nПопробуйте задать значение ещё раз.\n", begin + 1);
 				break;
 			}
-			printf("Введите конечное значение интервала поиска (целое неотрицательное значение): ");
-			scanf(" %d", &end);
+			printf("Введите конечное значение интервала поиска (от %d до %d включительно): ", begin + 1, records_count);
+			scanf(" %d", &end); getchar(); --end;
 			if (end > records_count)
 			{
-				printf("Ошибка инициализации конечного значения интервала поиска: %d больше %d.\nПопробуйте задать значение ещё раз.\n", end, records_count);
+				printf("Ошибка инициализации конечного значения интервала поиска: %d больше %d.\nПопробуйте задать значение ещё раз.\n", end + 1, records_count);
 				break;
 			}
 			else if (end <= begin + 1)
 			{
-				printf("Ошибка инициализации конечного значения интервала поиска: %d меньше или равно %d.\nПопробуйте задать значение ещё раз.\n", end, begin + 1);
+				printf("Ошибка инициализации конечного значения интервала поиска: %d меньше или равно %d.\nПопробуйте задать значение ещё раз.\n", end + 1, begin + 2);
 				break;
 			}
 			printf("Введите требуемое название технологии рендеринга: ");
-			getchar();
 			fgets(user_tech_render, sizeof(user_tech_render), stdin);
 			user_tech_render[strcspn(user_tech_render, "\n")] = '\0';
 			printf("Введите требуемые(-ое) названия(-ие) поддерживаемых(-ой) платформ(-ы) (через запятую с пробелами, в конце ввода запята не нужна): ");
-			scanf(" %s", user_supported_platforms_lexemes);
+			fgets(user_supported_platforms_lexemes, sizeof(user_supported_platforms_lexemes), stdin);
+			user_supported_platforms_lexemes[strcspn(user_supported_platforms_lexemes, "\n")] = '\0';
 			for (int i = begin + 1; i < end; i++)
 			{
 				if (!(strcmp(database[i].tech_render, user_tech_render)))
@@ -185,19 +187,14 @@ int main()
 			float rating;
 
 			printf("Введите наименование игрового движка: ");
-			//scanf(" %s", name);
-			getchar();
 			fgets(name, sizeof(name), stdin);
 			name[strcspn(name, "\n")] = '\0';
 			printf("Введите наименование технологии рендеринга: ");
-			//scanf(" %s", tech_render);
-			getchar();
 			fgets(tech_render, sizeof(tech_render), stdin);
 			tech_render[strcspn(tech_render, "\n")] = '\0';
 			printf("Укажите количество полигонов: ");
-			scanf(" %d", &polygons);
+			scanf(" %d", &polygons); getchar();
 			printf("Введите наименования поддерживаемых платформ (через запятую с пробелом, запятая в конце не нужна): ");
-			getchar();
 			fgets(supported_platforms_lexemes, sizeof(supported_platforms_lexemes), stdin);
 			supported_platforms_lexemes[strcspn(supported_platforms_lexemes, "\n")] = '\0';
 
@@ -227,9 +224,8 @@ int main()
 				scanf(" %c", &physics_quality);
 			}
 			printf("Укажите цену лицензии: ");
-			scanf(" %d", &license_cost);
+			scanf(" %d", &license_cost); getchar();
 			printf("Введите ссылку на сообщество разработчиков движка: ");
-			getchar();
 			fgets(community, sizeof(community), stdin);
 			community[strcspn(community, "\n")] = '\0';
 			printf("Введите ссылку на документацию к движку: ");
@@ -238,7 +234,7 @@ int main()
 			printf("Укажите рейтинг игрового движка: ");
 			scanf(" %f", &rating);
 
-			if (init_record(database, records_count, name, tech_render, polygons, supported_platforms, physics_quality, license_cost, community, doc, rating))
+			if (init_record(database, records_count - 1, name, tech_render, polygons, supported_platforms, physics_quality, license_cost, community, doc, rating))
 			{
 				printf("Ошибка инициализации полей последнего элемента массива структур: невозможно выделить память.\nПопробуйте ещё раз.\n");
 				break;
@@ -300,16 +296,15 @@ int main()
 			char community[FIELD_SIZE];
 			char doc[FIELD_SIZE];
 			float rating;
+
 			strcpy(name, names[rand() % (sizeof(names) / sizeof(names[0]))]);
-
 			strcpy(tech_render, techs[rand() % (sizeof(techs) / sizeof(techs[0]))]);
-
 			polygons = 1000000 + (rand() % 99000000);
-
 			unsigned platforms_count = 1 + (rand() % 4);
 			supported_platforms = NULL;
 
-			for (unsigned i = 0; i < platforms_count; i++) {
+			for (unsigned i = 0; i < platforms_count; i++) 
+			{
 				struct supported_platforms* new_platform = malloc(sizeof(struct supported_platforms));
 				char* platform_name = platforms[rand() % (sizeof(platforms) / sizeof(platforms[0]))];
 				new_platform->name = (char*)malloc(strlen(platform_name) + 1);
@@ -319,17 +314,14 @@ int main()
 			}
 
 			const char qualities[] = { 'A', 'B', 'C' };
+
 			physics_quality = qualities[rand() % 3];
-
 			license_cost = rand() % 100001;
-
 			strcpy(community, communities[rand() % (sizeof(communities) / sizeof(communities[0]))]);
-
 			strcpy(doc, docs[rand() % (sizeof(docs) / sizeof(docs[0]))]);
-
 			rating = (rand() % 51) / 10.0f;
 
-			if (init_record(database, records_count, name, tech_render, polygons, supported_platforms, physics_quality, license_cost, community, doc, rating))
+			if (init_record(database, records_count - 1, name, tech_render, polygons, supported_platforms, physics_quality, license_cost, community, doc, rating))
 			{
 				printf("Ошибка инициализации полей последнего элемента массива структур: невозможно выделить память.\nПопробуйте ещё раз.\n");
 				break;
@@ -346,7 +338,8 @@ int main()
 			char dataname[FIELD_SIZE];
 
 			printf("Введите название файла: ");
-			scanf(" %s", dataname);
+			fgets(dataname, sizeof(dataname), stdin);
+			dataname[strcspn(dataname, "\n")] = '\0';
 			if (store_data(dataname, database, records_count))
 			{
 				printf("Ошибка записи файла: невозможно открыть файл \"%s\" для записи.\nПроверьте ввод и попробуйте ещё раз.\n", dataname);
@@ -355,9 +348,23 @@ int main()
 			printf("Файл \"%s\" успешно записан. Количество записей: %d.\n", dataname, records_count);
 			break;
 		}
+		case 'o':
+		{
+			if (!(database))
+			{
+				printf("Ошибка отображения веса базы данных в ОЗУ: база данных не инициализирована. Инициализируйте базу данных и попробуйте снова.\n");
+				break;
+			}
+			size_t records_size = 0;
+			for (int i = 0; i < records_count; i++)
+				records_size += calculate_record_size(&database[i]);
+			printf("Вес базы данных в ОЗУ: %zuБ\n", records_size);
+			break;
+		}
 		case 'q':
 		{
-			puts("Завершение работы...");
+			free_database(database, records_count);
+			printf("----------\nЗавершение работы...");
 			break;
 		}
 		default: printf("Символ '%c' не является командой ввода. Повторите ввод ещё раз.\n", choice); break;

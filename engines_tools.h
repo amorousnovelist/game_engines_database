@@ -1,5 +1,6 @@
 ﻿#include "engines.h"
 
+size_t calculate_record_size(ENGINES* record);
 int print_record(ENGINES* database, const unsigned count);
 int init_record(ENGINES* database, const unsigned count, \
 	const char* name, \
