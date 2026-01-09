@@ -105,6 +105,7 @@ ENGINES* read_data(const char* dataname, unsigned* records_count)
 		}
 		database[i].supported_platforms = supported_platforms;
 	}
+	fclose(input_file);
 	return database;
 }
 /*
@@ -166,5 +167,6 @@ int store_data(const char* dataname, ENGINES* database, const unsigned records_c
 			temp = temp->next;
 		}
 	}
+	fclose(output_file);
 	return 0;
 }
