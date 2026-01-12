@@ -70,7 +70,7 @@ int print_record(ENGINES *database, const size_t count) {
 	printf("\n---------------------------------------------------------------------------------------------------------------------------\n");
 	printf("| качество физики | цена лицензии | сообщество                            | документация                          | рейтинг |\n");
 	printf("-----------------------------------------------------------------------------------------------------------------------------\n");
-	printf("| %-15c | %-13d | %-14s | %-12s | %-7.1f |\n", database[count].physics_quality, \
+	printf("| %-15c | %-13d | %-37s | %-37s | %-7.1f |\n", database[count].physics_quality, \
 		database[count].license_cost, \
 		database[count].community, \
 		database[count].doc, \
