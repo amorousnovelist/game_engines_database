@@ -17,7 +17,7 @@
 * @param count - количество записей в базе данных
 * @return нет
 */
-void gnome_sort(ENGINES* database, const unsigned count) {
+void gnome_sort(ENGINES* database, const size_t count) {
 	int index = 1;
 
 	while (index < count) {

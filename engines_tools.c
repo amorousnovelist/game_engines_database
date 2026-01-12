@@ -16,13 +16,14 @@
 /*
 * Подсчёт веса записи (в байтах) базы данных
 * @param ENGINES* record - указатель на адрес записи
-* @return размер (типа size_t) структуры в оперативной памяти
+* @return размер (типа size_t) записи в оперативной памяти
 */
 size_t calculate_record_size(ENGINES *record) {
 	size_t total = 0;
 
 	total += sizeof(ENGINES);
 
+	/*Валидация существования данных полей записи*/
 	if (record->name)
 		total += strlen(record->name) + 1;
 	if (record->tech_render)
@@ -36,6 +37,7 @@ size_t calculate_record_size(ENGINES *record) {
 
 	while (platform_reader) {
 		total += sizeof(struct supported_platforms);
+
 		if (platform_reader->name)
 			total += strlen(platform_reader->name) + 1;
 		platform_reader = platform_reader->next;
@@ -49,7 +51,7 @@ size_t calculate_record_size(ENGINES *record) {
 * @param count - индекс записи в базе данных
 * @return 0 в случае успешного завершения
 */
-int print_record(ENGINES *database, const unsigned count) {
+int print_record(ENGINES *database, const size_t count) {
 	printf("=============================================================================================================================\n");
 	printf("Запись %d\n", count+1);
 	printf("-----------------------------------------------------------------------------------------------------------------------------\n");
@@ -68,7 +70,7 @@ int print_record(ENGINES *database, const unsigned count) {
 	printf("\n---------------------------------------------------------------------------------------------------------------------------\n");
 	printf("| качество физики | цена лицензии | сообщество                            | документация                          | рейтинг |\n");
 	printf("-----------------------------------------------------------------------------------------------------------------------------\n");
-	printf("| %-15c | %-13d | %-14s | %-12s | %-7f |\n", database[count].physics_quality, \
+	printf("| %-15c | %-13d | %-14s | %-12s | %-7.1f |\n", database[count].physics_quality, \
 		database[count].license_cost, \
 		database[count].community, \
 		database[count].doc, \
@@ -93,7 +95,7 @@ int print_record(ENGINES *database, const unsigned count) {
 * @param rating - рейтинг игрового движка
 * @return 0 в случае успешного завершения; 1 в случае ошибки выделения памяти
 */
-int init_record(ENGINES *database, const unsigned count, \
+int init_record(ENGINES *database, const size_t count, \
 	const char *name, \
 	const char *tech_render, \
 	const unsigned polygons, \
@@ -103,10 +105,21 @@ int init_record(ENGINES *database, const unsigned count, \
 	const char *community, \
 	const char *doc, \
 	const float rating) {
+	/*
+	* Механизм инициализации полей записи заключается в том, чтобы
+	* сперва запросить память у системы ровно под длину строки и символ конца строки,
+	* а затем скопировать значения из переданных в функцию буферов в выделенную память.
+	* 
+	* Это очень эффективно экономит место. Если бы поля структуры (строки)
+	* были бы статическими, то они бы занимали в системе лишнее неиспользуемое пространство.
+	* Например, при строке статической name, которая занимала бы 128Б и при вводе пользователем
+	* в буфер строки "Linux", в строке оставались бы неиспользованными целых 123Б!
+	*/
 	database[count].name = (char*)malloc(strlen(name) + 1);
 	database[count].tech_render = (char*)malloc(strlen(tech_render) + 1);
 	database[count].community = (char*)malloc(strlen(community) + 1);
 	database[count].doc = (char*)malloc(strlen(doc) + 1);
+	/*Валидация выделения памяти*/
 	if (!database[count].name || !database[count].tech_render ||
 		!database[count].community || !database[count].doc) {
 		return 1;

@@ -20,8 +20,8 @@
 * @param count - количество записей в базе данных
 * @return нет
 */
-void free_database(ENGINES* database, const unsigned count) {
-	for (int i = 0; i < count; ++i) {
+void free_database(ENGINES* database, const size_t count) {
+	for (size_t i = 0; i < count; ++i) {
 		free(database[i].name);
 		free(database[i].tech_render);
 		free(database[i].community);
@@ -54,21 +54,30 @@ void free_supported_platforms(struct supported_platforms *head) {
 * @param records_count - указатель на переменную, в которую будет записано количество записей
 * @return указатель на массив структур ENGINES, содержащий записи из файла; NULL в случае ошибки открытия файла
 */
-ENGINES *read_data(const char *dataname, unsigned *records_count) {
+ENGINES *read_data(const char *data_name, size_t *records_count) {
 	FILE *input_file;
 
-	if (!(input_file = fopen(dataname, "rb")))
+	/*Валидация открытия файлового потока*/
+	if (!(input_file = fopen(data_name, "rb")))
 		return NULL;
-	fread(records_count, sizeof(unsigned), 1, input_file);
+	fread(records_count, sizeof(size_t), 1, input_file);
 
 	ENGINES *database = (ENGINES*)malloc(*records_count * sizeof(ENGINES));
 
-	for (int i = 0; i < *records_count; i++) {
+	for (size_t i = 0; i < *records_count; i++) {
+		/* Сперва читаются статические поля записи (числа и символ) */
 		fread(&database[i].polygons, sizeof(unsigned), 1, input_file);
 		fread(&database[i].physics_quality, sizeof(char), 1, input_file);
 		fread(&database[i].license_cost, sizeof(unsigned), 1, input_file);
 		fread(&database[i].rating, sizeof(float), 1, input_file);
 
+		/*
+		* Затем читаются динамические поля записи (строки)
+		* Механизм происходит в 3 этапа:
+		* 1) Чтение длины строки, которая уже содержит +1Б для символа конца строки.
+		* 2) Выделение памяти у системы под длину строки.
+		* 3) Чтение строки и инициализация поля записи.
+		*/
 		size_t name_len;
 
 		fread(&name_len, sizeof(size_t), 1, input_file);
@@ -128,19 +137,27 @@ ENGINES *read_data(const char *dataname, unsigned *records_count) {
 * @param records_count - количество записей в базе данных
 * @return 0 в случае успешного завершения; 1 в случае ошибки открытия файла
 */
-int store_data(const char* dataname, ENGINES* database, const unsigned records_count) {
+int store_data(const char* dataname, ENGINES* database, const size_t records_count) {
 	FILE *output_file;
-
+	/*Валидация открытия файлового потока*/
 	if (!(output_file = fopen(dataname, "wb")))
 		return 1;
-	fwrite(&records_count, sizeof(unsigned), 1, output_file);
+	fwrite(&records_count, sizeof(size_t), 1, output_file);
 
 	for (int i = 0; i < records_count; i++) {
+		/* Для удобства сперва записываются статические поля записи (числа и символ) */
 		fwrite(&database[i].polygons, sizeof(unsigned), 1, output_file);
 		fwrite(&database[i].physics_quality, sizeof(char), 1, output_file);
 		fwrite(&database[i].license_cost, sizeof(unsigned), 1, output_file);
 		fwrite(&database[i].rating, sizeof(float), 1, output_file);
 
+		/*
+		* Затем записываются динамические поля записи (строки)
+		* Механизм происходит в 3 этапа:
+		* 1) Подсчет длины строки поля, включая символ конца строки.
+		* 2) Запись длины строки поля в файл.
+		* 3) Запись самой строки поля в файл.
+		*/
 		size_t name_len = strlen(database[i].name) + 1;
 
 		fwrite(&name_len, sizeof(size_t), 1, output_file);

@@ -14,7 +14,7 @@
 /*
 * Подсчёт веса записи (в байтах) базы данных
 * @param ENGINES* record - указатель на адрес записи
-* @return размер (типа size_t) структуры в оперативной памяти
+* @return размер (типа size_t) записи в оперативной памяти
 */
 size_t calculate_record_size(ENGINES *record);
 
@@ -24,7 +24,7 @@ size_t calculate_record_size(ENGINES *record);
 * @param count - индекс записи в базе данных
 * @return 0 в случае успешного завершения
 */
-int print_record(ENGINES *database, const unsigned count);
+int print_record(ENGINES *database, const size_t count);
 
 /*
 * Инициализация полей записи базы данных
@@ -41,7 +41,7 @@ int print_record(ENGINES *database, const unsigned count);
 * @param rating - рейтинг игрового движка
 * @return 0 в случае успешного завершения; 1 в случае ошибки выделения памяти
 */
-int init_record(ENGINES *database, const unsigned count, \
+int init_record(ENGINES *database, const size_t count, \
 	const char *name, \
 	const char *tech_render, \
 	const unsigned polygons, \
