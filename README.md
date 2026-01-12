@@ -32,28 +32,50 @@
 7. Завершить цикл ввода команд от пользователя, если пользователь выбрал команду "Выход".
 8. Конец
 ### Блок-схема главной функции (программы)
+
 <img width="536" height="682" alt="main drawio" src="https://github.com/user-attachments/assets/35975a7d-7998-4863-b8aa-7bd0f552c28f" />
+
 ### Блок-схемы команд программы
 1. Команда загрузка данных из файла
+
 <img width="102" height="522" alt="d drawio" src="https://github.com/user-attachments/assets/d4ec6a52-b3c6-4560-b395-485b4ff240c2" />
+
 2. Команда просмотра записей
+
 <img width="352" height="392" alt="v drawio" src="https://github.com/user-attachments/assets/e4e3e507-60cc-47da-b69d-69dcb347fab9" />
+
 3. Команда поиска записей в заданном диапазоне
+
 <img width="836" height="992" alt="r drawio" src="https://github.com/user-attachments/assets/5bcfe887-3453-4216-add4-3a5f353ee6c9" />
+
 4. Команда сортировки записей
+
 <img width="142" height="382" alt="s drawio" src="https://github.com/user-attachments/assets/bb7ec128-e753-4149-8ab0-5c7371e9e76c" />
+
 5. Команда добавления записи с пользовательскими данными в текущую (открытую) базу данных
+
 <img width="254" height="562" alt="a drawio(1)" src="https://github.com/user-attachments/assets/3bcb2e9a-5557-4f7d-9b7e-f56a4bdc8c2e" />
+
 6. Команда добавления записи с тестовыми случайными данными в текущую (открытую) базу данных
+
 <img width="254" height="562" alt="t drawio" src="https://github.com/user-attachments/assets/8ccf7025-d2d7-44f4-aa08-9ee055252653" />
+
 7. Команда записи текущей (открытой) базы данных в файл
+
 <img width="102" height="362" alt="w drawio" src="https://github.com/user-attachments/assets/3dd38da8-dfe3-423e-b159-5075d2389b4a" />
+
 8. Команда отображения веса текущей (открытой) базы данных в байтах
+
 <img width="297" height="577" alt="o drawio" src="https://github.com/user-attachments/assets/1c7dafb9-977e-4b39-ab7e-f5dde6c32b2f" />
+
 9. Команда отображения меню
+
 <img width="142" height="202" alt="m drawio" src="https://github.com/user-attachments/assets/18a348a9-159a-4c5b-a807-3e2b77980610" />
+
 10. Команда завершения работы программы
+
 <img width="102" height="222" alt="q drawio" src="https://github.com/user-attachments/assets/729d0a0b-0615-47c9-a69e-f5c4183ac37d" />
+
 ## 2. Описание ключевых функций
 Функция
 ```
@@ -119,7 +141,9 @@ void gnome_sort(ENGINES *database, const size_t count);
 Рейтинг: 3.5
 ```
 Запись 1 с данными контрольного примера в открытой базе данных:
+
 <img width="1526" height="950" alt="изображение" src="https://github.com/user-attachments/assets/77aaad4a-bdcb-473c-8b0a-ef0039be0b7d" />
+
 Контрольный пример данных для записи 2:
 ```
 Наименование: GameMaker
@@ -133,7 +157,9 @@ void gnome_sort(ENGINES *database, const size_t count);
 Рейтинг: 4.5
 ```
 Запись 2 с данными контрольного примера в открытой базе данных:
+
 <img width="1516" height="946" alt="изображение" src="https://github.com/user-attachments/assets/01aa3d4d-e3b6-4023-871c-8c4702b802c3" />
+
 ## 4. Формат данных
 Программа реализует формат данных как структуру на основе динамических массивов символов (строк), связного списка, структура которого включает в себя динамический массив символов (строку) и указатель на следующий элемент списка и которая описана в этом же файле, беззнаковых целочисленных переменных, переменной с плавующей точкой и символьной переменной. 
 Реализовано эффективное выравнивание памяти относительно выравнивания наибольшего элемента структуры (общий размер структуры должен быть кратен его весу): сперва идет описание указателей на динамические строки, которые весят 8Б, затем идет указатель на связный список, который тоже весит 8Б, беззнаковые целочисленные переменные и переменная с плавующей точкой, которые весят 4Б, и символьная переменная, которая весит 1Б.
@@ -161,6 +187,8 @@ typedef struct engines {
 ## 5. Реализация программы
 Реализация программы представлена в файлах репозитория.
 ## 6. Результаты работы программы
+
 <img width="1516" height="830" alt="изображение" src="https://github.com/user-attachments/assets/c15cbae7-13a5-4af6-abfa-ddc88fcf7b2e" />
+
 ## 7. Информация о разработчике
 Илья Зеленев, бТИИ-251
