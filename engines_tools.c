@@ -1,11 +1,24 @@
-﻿#define _CRT_SECURE_NO_DEPRECATE
+﻿/*
+* Автор файла: Илья Зеленев, бТИИ-251.
+* 
+* Файл содержит определения функций для работы с записями базы данных,
+* а именно для инициализации записи переданными данными, чтения записи и подсчета веса записи (в байтах),
+* объявленные в engines_tools.h
+*/
+
+#define _CRT_SECURE_NO_DEPRECATE
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "engines_tools.h"
 
-size_t calculate_record_size(ENGINES* record)
-{
+/*
+* Подсчёт веса записи (в байтах) базы данных
+* @param ENGINES* record - указатель на адрес записи
+* @return размер (типа size_t) структуры в оперативной памяти
+*/
+size_t calculate_record_size(ENGINES *record) {
 	size_t total = 0;
 
 	total += sizeof(ENGINES);
@@ -20,24 +33,23 @@ size_t calculate_record_size(ENGINES* record)
 		total += strlen(record->doc) + 1;
 
 	struct supported_platforms* platform_reader = record->supported_platforms;
-	while (platform_reader)
-	{
+
+	while (platform_reader) {
 		total += sizeof(struct supported_platforms);
 		if (platform_reader->name)
 			total += strlen(platform_reader->name) + 1;
 		platform_reader = platform_reader->next;
 	}
-
 	return total;
 }
+
 /*
 * Печать записи базы данных
 * @param database - указатель на массив структур ENGINES
 * @param count - индекс записи в базе данных
 * @return 0 в случае успешного завершения
 */
-int print_record(ENGINES* database, const unsigned count)
-{
+int print_record(ENGINES *database, const unsigned count) {
 	printf("=============================================================================================================================\n");
 	printf("Запись %d\n", count+1);
 	printf("-----------------------------------------------------------------------------------------------------------------------------\n");
@@ -46,9 +58,10 @@ int print_record(ENGINES* database, const unsigned count)
 	printf("| %-15s | %-13s | %-14d | ", database[count].name, \
 		database[count].tech_render, \
 		database[count].polygons);
-	struct supported_platforms* supported_platforms = database[count].supported_platforms;
-	while (supported_platforms)
-	{
+	
+	struct supported_platforms *supported_platforms = database[count].supported_platforms;
+
+	while (supported_platforms) {
 		printf("%-8s | ", supported_platforms->name);
 		supported_platforms = supported_platforms->next;
 	}
@@ -60,12 +73,11 @@ int print_record(ENGINES* database, const unsigned count)
 		database[count].community, \
 		database[count].doc, \
 		database[count].rating);
-
 	printf("-----------------------------------------------------------------------------------------------------------------------------\n");
 	printf("Вес памяти: %zuБ\n", calculate_record_size(&database[count]));
-
 	return 0;
 }
+
 /*
 * Инициализация полей записи базы данных
 * @param database - указатель на массив структур ENGINES
@@ -81,27 +93,24 @@ int print_record(ENGINES* database, const unsigned count)
 * @param rating - рейтинг игрового движка
 * @return 0 в случае успешного завершения; 1 в случае ошибки выделения памяти
 */
-int init_record(ENGINES* database, const unsigned count, \
-	const char* name, \
-	const char* tech_render, \
+int init_record(ENGINES *database, const unsigned count, \
+	const char *name, \
+	const char *tech_render, \
 	const unsigned polygons, \
-	const struct supported_platforms* supported_platforms, \
+	const struct supported_platforms *supported_platforms, \
 	const char physics_quality, \
 	const unsigned license_cost, \
-	const char* community, \
-	const char* doc, \
-	const float rating)
-{
+	const char *community, \
+	const char *doc, \
+	const float rating) {
 	database[count].name = (char*)malloc(strlen(name) + 1);
 	database[count].tech_render = (char*)malloc(strlen(tech_render) + 1);
 	database[count].community = (char*)malloc(strlen(community) + 1);
 	database[count].doc = (char*)malloc(strlen(doc) + 1);
-
 	if (!database[count].name || !database[count].tech_render ||
 		!database[count].community || !database[count].doc) {
 		return 1;
 	}
-
 	strcpy(database[count].name, name);
 	strcpy(database[count].tech_render, tech_render);
 	database[count].polygons = polygons;
@@ -111,6 +120,5 @@ int init_record(ENGINES* database, const unsigned count, \
 	strcpy(database[count].community, community);
 	strcpy(database[count].doc, doc);
 	database[count].rating = rating;
-
 	return 0;
 }
