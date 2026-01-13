@@ -14,11 +14,11 @@
 
 /*
 * Освобождение памяти, выделенной под базу данных
-* @param database - указатель на массив структур ENGINES, содержащий записи базы данных
+* @param p_database - указатель на массив структур ENGINES, содержащий записи базы данных
 * @param count - количество записей в базе данных
 * @return нет
 */
-void free_database(ENGINES *database, const size_t count);
+void free_database(ENGINES *p_database, const size_t count);
 
 /*
 * Освобождение памяти, выделенной под связный список поддерживаемых платформ
@@ -38,10 +38,10 @@ ENGINES* read_data(const char *data_name, size_t *records_count);
 /*
 * Сохранение базы данных в бинарный файл
 * @param dataname - имя файла
-* @param database - указатель на массив структур ENGINES, содержащий записи для сохранения
+* @param p_database - указатель на массив структур ENGINES, содержащий записи для сохранения
 * @param records_count - количество записей в базе данных
 * @return 0 в случае успешного завершения; 1 в случае ошибки открытия файла
 */
-int store_data(const char *data_name, ENGINES *database, const size_t records_count);
+int store_data(const char *data_name, ENGINES *p_database, const size_t records_count);
 
 #endif

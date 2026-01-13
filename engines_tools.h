@@ -20,15 +20,15 @@ size_t calculate_record_size(ENGINES *record);
 
 /*
 * Печать записи базы данных
-* @param database - указатель на массив структур ENGINES
+* @param p_database - указатель на массив структур ENGINES
 * @param count - индекс записи в базе данных
 * @return 0 в случае успешного завершения
 */
-int print_record(ENGINES *database, const size_t count);
+int print_record(ENGINES *p_database, const size_t count);
 
 /*
 * Инициализация полей записи базы данных
-* @param database - указатель на массив структур ENGINES
+* @param p_database - указатель на массив структур ENGINES
 * @param count - индекс записи в базе данных
 * @param name - наименование игрового движка
 * @param tech_render - технология рендеринга
@@ -41,7 +41,7 @@ int print_record(ENGINES *database, const size_t count);
 * @param rating - рейтинг игрового движка
 * @return 0 в случае успешного завершения; 1 в случае ошибки выделения памяти
 */
-int init_record(ENGINES *database, const size_t count, \
+int init_record(ENGINES *p_database, const size_t count, \
 	const char *name, \
 	const char *tech_render, \
 	const unsigned polygons, \

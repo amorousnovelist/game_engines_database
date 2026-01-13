@@ -16,19 +16,19 @@
 
 /*
 * Освобождение памяти, выделенной под базу данных
-* @param database - указатель на массив структур ENGINES, содержащий записи базы данных
+* @param p_database - указатель на массив структур ENGINES, содержащий записи базы данных
 * @param count - количество записей в базе данных
 * @return нет
 */
-void free_database(ENGINES* database, const size_t count) {
+void free_database(ENGINES* p_database, const size_t count) {
 	for (size_t i = 0; i < count; ++i) {
-		free(database[i].name);
-		free(database[i].tech_render);
-		free(database[i].community);
-		free(database[i].doc);
-		free_supported_platforms(database[i].supported_platforms);
+		free(p_database[i].name);
+		free(p_database[i].tech_render);
+		free(p_database[i].community);
+		free(p_database[i].doc);
+		free_supported_platforms(p_database[i].supported_platforms);
 	}
-	free(database);
+	free(p_database);
 }
 
 /*
@@ -62,14 +62,14 @@ ENGINES *read_data(const char *data_name, size_t *records_count) {
 		return NULL;
 	fread(records_count, sizeof(size_t), 1, input_file);
 
-	ENGINES *database = (ENGINES*)malloc(*records_count * sizeof(ENGINES));
+	ENGINES *p_database = (ENGINES*)malloc(*records_count * sizeof(ENGINES));
 
 	for (size_t i = 0; i < *records_count; i++) {
 		/* Сперва читаются статические поля записи (числа и символ) */
-		fread(&database[i].polygons, sizeof(unsigned), 1, input_file);
-		fread(&database[i].physics_quality, sizeof(char), 1, input_file);
-		fread(&database[i].license_cost, sizeof(unsigned), 1, input_file);
-		fread(&database[i].rating, sizeof(float), 1, input_file);
+		fread(&p_database[i].polygons, sizeof(unsigned), 1, input_file);
+		fread(&p_database[i].physics_quality, sizeof(char), 1, input_file);
+		fread(&p_database[i].license_cost, sizeof(unsigned), 1, input_file);
+		fread(&p_database[i].rating, sizeof(float), 1, input_file);
 
 		/*
 		* Затем читаются динамические поля записи (строки)
@@ -81,26 +81,26 @@ ENGINES *read_data(const char *data_name, size_t *records_count) {
 		size_t name_len;
 
 		fread(&name_len, sizeof(size_t), 1, input_file);
-		database[i].name = (char*)malloc(name_len);
-		fread(database[i].name, sizeof(char), name_len, input_file);
+		p_database[i].name = (char*)malloc(name_len);
+		fread(p_database[i].name, sizeof(char), name_len, input_file);
 
 		size_t tech_render_len;
 
 		fread(&tech_render_len, sizeof(size_t), 1, input_file);
-		database[i].tech_render = (char*)malloc(tech_render_len);
-		fread(database[i].tech_render, sizeof(char), tech_render_len, input_file);
+		p_database[i].tech_render = (char*)malloc(tech_render_len);
+		fread(p_database[i].tech_render, sizeof(char), tech_render_len, input_file);
 
 		size_t community_len;
 
 		fread(&community_len, sizeof(size_t), 1, input_file);
-		database[i].community = (char*)malloc(community_len);
-		fread(database[i].community, sizeof(char), community_len, input_file);
+		p_database[i].community = (char*)malloc(community_len);
+		fread(p_database[i].community, sizeof(char), community_len, input_file);
 
 		size_t doc_len;
 
 		fread(&doc_len, sizeof(size_t), 1, input_file);
-		database[i].doc = (char*)malloc(doc_len);
-		fread(database[i].doc, sizeof(char), doc_len, input_file);
+		p_database[i].doc = (char*)malloc(doc_len);
+		fread(p_database[i].doc, sizeof(char), doc_len, input_file);
 
 		size_t supported_platforms_count;
 
@@ -124,20 +124,20 @@ ENGINES *read_data(const char *data_name, size_t *records_count) {
 			temp->next = supported_platforms;
 			supported_platforms = temp;
 		}
-		database[i].supported_platforms = supported_platforms;
+		p_database[i].supported_platforms = supported_platforms;
 	}
 	fclose(input_file);
-	return database;
+	return p_database;
 }
 
 /*
 * Сохранение базы данных в бинарный файл
 * @param dataname - имя файла
-* @param database - указатель на массив структур ENGINES, содержащий записи для сохранения
+* @param p_database - указатель на массив структур ENGINES, содержащий записи для сохранения
 * @param records_count - количество записей в базе данных
 * @return 0 в случае успешного завершения; 1 в случае ошибки открытия файла
 */
-int store_data(const char* dataname, ENGINES* database, const size_t records_count) {
+int store_data(const char* dataname, ENGINES* p_database, const size_t records_count) {
 	FILE *output_file;
 	/*Валидация открытия файлового потока*/
 	if (!(output_file = fopen(dataname, "wb")))
@@ -146,10 +146,10 @@ int store_data(const char* dataname, ENGINES* database, const size_t records_cou
 
 	for (int i = 0; i < records_count; i++) {
 		/* Для удобства сперва записываются статические поля записи (числа и символ) */
-		fwrite(&database[i].polygons, sizeof(unsigned), 1, output_file);
-		fwrite(&database[i].physics_quality, sizeof(char), 1, output_file);
-		fwrite(&database[i].license_cost, sizeof(unsigned), 1, output_file);
-		fwrite(&database[i].rating, sizeof(float), 1, output_file);
+		fwrite(&p_database[i].polygons, sizeof(unsigned), 1, output_file);
+		fwrite(&p_database[i].physics_quality, sizeof(char), 1, output_file);
+		fwrite(&p_database[i].license_cost, sizeof(unsigned), 1, output_file);
+		fwrite(&p_database[i].rating, sizeof(float), 1, output_file);
 
 		/*
 		* Затем записываются динамические поля записи (строки)
@@ -158,27 +158,27 @@ int store_data(const char* dataname, ENGINES* database, const size_t records_cou
 		* 2) Запись длины строки поля в файл.
 		* 3) Запись самой строки поля в файл.
 		*/
-		size_t name_len = strlen(database[i].name) + 1;
+		size_t name_len = strlen(p_database[i].name) + 1;
 
 		fwrite(&name_len, sizeof(size_t), 1, output_file);
-		fwrite(database[i].name, sizeof(char), name_len, output_file);
+		fwrite(p_database[i].name, sizeof(char), name_len, output_file);
 
-		size_t tech_render_len = strlen(database[i].tech_render) + 1;
+		size_t tech_render_len = strlen(p_database[i].tech_render) + 1;
 
 		fwrite(&tech_render_len, sizeof(size_t), 1, output_file);
-		fwrite(database[i].tech_render, sizeof(char), tech_render_len, output_file);
+		fwrite(p_database[i].tech_render, sizeof(char), tech_render_len, output_file);
 
-		size_t community_len = strlen(database[i].community) + 1;
+		size_t community_len = strlen(p_database[i].community) + 1;
 
 		fwrite(&community_len, sizeof(size_t), 1, output_file);
-		fwrite(database[i].community, sizeof(char), community_len, output_file);
+		fwrite(p_database[i].community, sizeof(char), community_len, output_file);
 
-		size_t doc_len = strlen(database[i].doc) + 1;
+		size_t doc_len = strlen(p_database[i].doc) + 1;
 
 		fwrite(&doc_len, sizeof(size_t), 1, output_file);
-		fwrite(database[i].doc, sizeof(char), doc_len, output_file);
+		fwrite(p_database[i].doc, sizeof(char), doc_len, output_file);
 
-		struct supported_platforms *supported_platforms = database[i].supported_platforms;
+		struct supported_platforms *supported_platforms = p_database[i].supported_platforms;
 		size_t platforms_count = 0;
 		struct supported_platforms *temp = supported_platforms;
 

@@ -47,21 +47,21 @@ size_t calculate_record_size(ENGINES *record) {
 
 /*
 * Печать записи базы данных
-* @param database - указатель на массив структур ENGINES
+* @param p_database - указатель на массив структур ENGINES
 * @param count - индекс записи в базе данных
 * @return 0 в случае успешного завершения
 */
-int print_record(ENGINES *database, const size_t count) {
+int print_record(ENGINES *p_database, const size_t count) {
 	printf("=============================================================================================================================\n");
 	printf("Запись %d\n", count+1);
 	printf("-----------------------------------------------------------------------------------------------------------------------------\n");
 	printf("| наименование    | тех.рендер    | макс.полигонов |                       поддерживаемые платформы                         |\n");
 	printf("-----------------------------------------------------------------------------------------------------------------------------\n");
-	printf("| %-15s | %-13s | %-14d | ", database[count].name, \
-		database[count].tech_render, \
-		database[count].polygons);
+	printf("| %-15s | %-13s | %-14d | ", p_database[count].name, \
+		p_database[count].tech_render, \
+		p_database[count].polygons);
 	
-	struct supported_platforms *supported_platforms = database[count].supported_platforms;
+	struct supported_platforms *supported_platforms = p_database[count].supported_platforms;
 
 	while (supported_platforms) {
 		printf("%-8s | ", supported_platforms->name);
@@ -70,19 +70,19 @@ int print_record(ENGINES *database, const size_t count) {
 	printf("\n---------------------------------------------------------------------------------------------------------------------------\n");
 	printf("| качество физики | цена лицензии | сообщество                            | документация                          | рейтинг |\n");
 	printf("-----------------------------------------------------------------------------------------------------------------------------\n");
-	printf("| %-15c | %-13d | %-37s | %-37s | %-7.1f |\n", database[count].physics_quality, \
-		database[count].license_cost, \
-		database[count].community, \
-		database[count].doc, \
-		database[count].rating);
+	printf("| %-15c | %-13d | %-37s | %-37s | %-7.1f |\n", p_database[count].physics_quality, \
+		p_database[count].license_cost, \
+		p_database[count].community, \
+		p_database[count].doc, \
+		p_database[count].rating);
 	printf("-----------------------------------------------------------------------------------------------------------------------------\n");
-	printf("Вес памяти: %zuБ\n", calculate_record_size(&database[count]));
+	printf("Вес памяти: %zuБ\n", calculate_record_size(&p_database[count]));
 	return 0;
 }
 
 /*
 * Инициализация полей записи базы данных
-* @param database - указатель на массив структур ENGINES
+* @param p_database - указатель на массив структур ENGINES
 * @param count - индекс записи в базе данных
 * @param name - наименование игрового движка
 * @param tech_render - технология рендеринга
@@ -95,7 +95,7 @@ int print_record(ENGINES *database, const size_t count) {
 * @param rating - рейтинг игрового движка
 * @return 0 в случае успешного завершения; 1 в случае ошибки выделения памяти
 */
-int init_record(ENGINES *database, const size_t count, \
+int init_record(ENGINES *p_database, const size_t count, \
 	const char *name, \
 	const char *tech_render, \
 	const unsigned polygons, \
@@ -115,23 +115,23 @@ int init_record(ENGINES *database, const size_t count, \
 	* Например, при строке статической name, которая занимала бы 128Б и при вводе пользователем
 	* в буфер строки "Linux", в строке оставались бы неиспользованными целых 123Б!
 	*/
-	database[count].name = (char*)malloc(strlen(name) + 1);
-	database[count].tech_render = (char*)malloc(strlen(tech_render) + 1);
-	database[count].community = (char*)malloc(strlen(community) + 1);
-	database[count].doc = (char*)malloc(strlen(doc) + 1);
+	p_database[count].name = (char*)malloc(strlen(name) + 1);
+	p_database[count].tech_render = (char*)malloc(strlen(tech_render) + 1);
+	p_database[count].community = (char*)malloc(strlen(community) + 1);
+	p_database[count].doc = (char*)malloc(strlen(doc) + 1);
 	/*Валидация выделения памяти*/
-	if (!database[count].name || !database[count].tech_render ||
-		!database[count].community || !database[count].doc) {
+	if (!p_database[count].name || !p_database[count].tech_render ||
+		!p_database[count].community || !p_database[count].doc) {
 		return 1;
 	}
-	strcpy(database[count].name, name);
-	strcpy(database[count].tech_render, tech_render);
-	database[count].polygons = polygons;
-	database[count].supported_platforms = supported_platforms;
-	database[count].physics_quality = physics_quality;
-	database[count].license_cost = license_cost;
-	strcpy(database[count].community, community);
-	strcpy(database[count].doc, doc);
-	database[count].rating = rating;
+	strcpy(p_database[count].name, name);
+	strcpy(p_database[count].tech_render, tech_render);
+	p_database[count].polygons = polygons;
+	p_database[count].supported_platforms = supported_platforms;
+	p_database[count].physics_quality = physics_quality;
+	p_database[count].license_cost = license_cost;
+	strcpy(p_database[count].community, community);
+	strcpy(p_database[count].doc, doc);
+	p_database[count].rating = rating;
 	return 0;
 }

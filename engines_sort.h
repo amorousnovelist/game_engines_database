@@ -14,10 +14,10 @@
 
 /*
 * Гномья сортировка по количеству полигонов
-* @param database - указатель на массив структур ENGINES
+* @param p_database - указатель на массив структур ENGINES
 * @param count - количество записей в базе данных
 * @return нет
 */
-void gnome_sort(ENGINES *database, const size_t count);
+void gnome_sort(ENGINES *p_database, const size_t count);
 
 #endif

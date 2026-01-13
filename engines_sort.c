@@ -13,20 +13,20 @@
 
 /*
 * Гномья сортировка по количеству полигонов
-* @param database - указатель на массив структур ENGINES
+* @param p_database - указатель на массив структур ENGINES
 * @param count - количество записей в базе данных
 * @return нет
 */
-void gnome_sort(ENGINES* database, const size_t count) {
+void gnome_sort(ENGINES* p_database, const size_t count) {
 	int index = 1;
 
 	while (index < count) {
-		if (sqrt(database[index].polygons) >= sqrt(database[index - 1].polygons))
+		if (sqrt(p_database[index].polygons) >= sqrt(p_database[index - 1].polygons))
 			index++;
 		else {
-			ENGINES temp = database[index];
-			database[index] = database[index - 1];
-			database[index - 1] = temp;
+			ENGINES temp = p_database[index];
+			p_database[index] = p_database[index - 1];
+			p_database[index - 1] = temp;
 			index--;
 		}
 	}
