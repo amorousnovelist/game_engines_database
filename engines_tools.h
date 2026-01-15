@@ -22,7 +22,7 @@ size_t calculate_record_size(ENGINES *record);
 * Печать записи базы данных
 * @param p_database - указатель на массив структур ENGINES
 * @param count - индекс записи в базе данных
-* @return 0 в случае успешного завершения
+* @return нет
 */
 void print_record(ENGINES *p_database, const size_t count);
 
