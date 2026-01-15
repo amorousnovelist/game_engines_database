@@ -18,6 +18,14 @@
 * @param count - количество записей в базе данных
 * @return нет
 */
-void gnome_sort(ENGINES *p_database, const size_t count);
+void gnome_sort(ENGINES* p_database, const size_t count);
+
+/*
+* Пузырьковая сортировка по количеству полигонов
+* @param p_database - указатель на массив структур ENGINES
+* @param count - количество записей в базе данных
+* @return нет
+*/
+void bubble_sort(ENGINES* p_database, const size_t count);
 
 #endif

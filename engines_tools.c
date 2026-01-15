@@ -44,7 +44,10 @@ size_t calculate_record_size(ENGINES *record) {
 	}
 	return total;
 }
-
+void compact_print_record(ENGINES* p_database, const size_t count) {
+	printf("-----------------------------------------------------------------------------------------------------------------------------\n");
+	printf("| %8zu | %-14d | XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX |\n", count + 1, p_database[count].polygons);
+}
 /*
 * Печать записи базы данных
 * @param p_database - указатель на массив структур ENGINES
@@ -52,30 +55,41 @@ size_t calculate_record_size(ENGINES *record) {
 * @return нет
 */
 void print_record(ENGINES *p_database, const size_t count) {
-	printf("=============================================================================================================================\n");
-	printf("Запись %d\n", count+1);
-	printf("-----------------------------------------------------------------------------------------------------------------------------\n");
-	printf("| наименование    | тех.рендер    | макс.полигонов |                       поддерживаемые платформы                         |\n");
-	printf("-----------------------------------------------------------------------------------------------------------------------------\n");
-	printf("| %-15s | %-13s | %-14d | ", p_database[count].name, \
+	printf("=====================================================================================================================================\n");
+	printf("Запись %zu\n", count + 1);
+	printf("-------------------------------------------------------------------------------------------------------------------------------------\n");
+	printf("| наименование    | тех.рендер             | макс.полигонов |                       поддерживаемые платформы                        |\n");
+	printf("-------------------------------------------------------------------------------------------------------------------------------------\n");
+	printf("| %-15s | %-22s | %-14d | ", p_database[count].name, \
 		p_database[count].tech_render, \
 		p_database[count].polygons);
 	
 	struct supported_platforms *supported_platforms = p_database[count].supported_platforms;
 
+	size_t supported_platforms_count = 0;
 	while (supported_platforms) {
-		printf("%-8s | ", supported_platforms->name);
+		printf("%-15s | ", supported_platforms->name);
+		supported_platforms_count++;
+
 		supported_platforms = supported_platforms->next;
+		if (supported_platforms) {
+			if (supported_platforms_count == 4)
+				printf("\n|-----------------------------------------------------------| ");
+			else if (supported_platforms_count % 4 == 0) {
+				//printf("| XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX | ");
+				printf("\n|                                                           | ");
+			}
+		}
 	}
-	printf("\n---------------------------------------------------------------------------------------------------------------------------\n");
-	printf("| качество физики | цена лицензии | сообщество                            | документация                          | рейтинг |\n");
-	printf("-----------------------------------------------------------------------------------------------------------------------------\n");
-	printf("| %-15c | %-13d | %-37s | %-37s | %-7.1f |\n", p_database[count].physics_quality, \
+	printf("\n-------------------------------------------------------------------------------------------------------------------------------------\n");
+	printf("| качество физики | цена лицензии | сообщество                                | документация                      | рейтинг         |\n");
+	printf("-------------------------------------------------------------------------------------------------------------------------------------\n");
+	printf("| %-15c | %-13d | %-41s | %-33s | %-15.1f |\n", p_database[count].physics_quality, \
 		p_database[count].license_cost, \
 		p_database[count].community, \
 		p_database[count].doc, \
 		p_database[count].rating);
-	printf("-----------------------------------------------------------------------------------------------------------------------------\n");
+	printf("--------------------------------------------------------------------------------------------------------------------------------------\n");
 	printf("Вес памяти: %zuБ\n", calculate_record_size(&p_database[count]));
 }
 
