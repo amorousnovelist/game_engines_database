@@ -24,7 +24,7 @@ size_t calculate_record_size(ENGINES *record);
 * @param count - индекс записи в базе данных
 * @return 0 в случае успешного завершения
 */
-int print_record(ENGINES *p_database, const size_t count);
+void print_record(ENGINES *p_database, const size_t count);
 
 /*
 * Инициализация полей записи базы данных

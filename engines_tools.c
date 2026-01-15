@@ -23,7 +23,7 @@ size_t calculate_record_size(ENGINES *record) {
 
 	total += sizeof(ENGINES);
 
-	/*Валидация существования данных полей записи*/
+	/*Валидация существования данных в полях записи*/
 	if (record->name)
 		total += strlen(record->name) + 1;
 	if (record->tech_render)
@@ -51,7 +51,7 @@ size_t calculate_record_size(ENGINES *record) {
 * @param count - индекс записи в базе данных
 * @return 0 в случае успешного завершения
 */
-int print_record(ENGINES *p_database, const size_t count) {
+void print_record(ENGINES *p_database, const size_t count) {
 	printf("=============================================================================================================================\n");
 	printf("Запись %d\n", count+1);
 	printf("-----------------------------------------------------------------------------------------------------------------------------\n");
@@ -77,7 +77,6 @@ int print_record(ENGINES *p_database, const size_t count) {
 		p_database[count].rating);
 	printf("-----------------------------------------------------------------------------------------------------------------------------\n");
 	printf("Вес памяти: %zuБ\n", calculate_record_size(&p_database[count]));
-	return 0;
 }
 
 /*
@@ -113,7 +112,7 @@ int init_record(ENGINES *p_database, const size_t count, \
 	* Это очень эффективно экономит место. Если бы поля структуры (строки)
 	* были бы статическими, то они бы занимали в системе лишнее неиспользуемое пространство.
 	* Например, при строке статической name, которая занимала бы 128Б и при вводе пользователем
-	* в буфер строки "Linux", в строке оставались бы неиспользованными целых 123Б!
+	* в буфер строки "Linux", в строке оставались бы неиспользованными целых 122Б!
 	*/
 	p_database[count].name = (char*)malloc(strlen(name) + 1);
 	p_database[count].tech_render = (char*)malloc(strlen(tech_render) + 1);
