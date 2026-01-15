@@ -27,7 +27,8 @@ void gnome_sort(ENGINES* p_database, const size_t count) {
 			ENGINES temp = p_database[index];
 			p_database[index] = p_database[index - 1];
 			p_database[index - 1] = temp;
-			index--;
+			if (index > 1)
+				index--;
 		}
 	}
 }
